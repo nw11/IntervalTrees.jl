@@ -397,7 +397,8 @@ end
 
 function _setindex!{K, V, B}(t::LeafNode{K, V, B}, value::V, key::Interval{K},
                              noupdate::Bool)
-    i = max(1, findidx(t, key))
+    #i = max(1, findidx(t, key))
+    i = length(t.keys) == 0 ? 1 : findidx(t,key)
     if i <= length(t) && t.keys[i] == key
         if noupdate
             return SetIndexResult{K, V, B}(false, t.values[i], nothing, nothing,
@@ -678,10 +679,7 @@ end
 
 # Find index where a key belongs in internal and leaf nodes.
 function findidx{K, V, B}(t::LeafNode{K, V, B}, key::Interval{K})
-    if length(t.keys) == 0 
-        return 0
-    end
-    return searchsortedfirst(t.keys, key)
+    return isempty(t.keys) ? 0 : searchsortedfirst(t.keys, key)
 end
 
 function findidx{K, V, B}(t::InternalNode{K, V, B}, key::Interval{K})
